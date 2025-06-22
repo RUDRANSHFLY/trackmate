@@ -1,4 +1,5 @@
 import MapTracker from '@/components/map-tracker'
+import "@/service/background-location-track"
 import React from 'react'
 import { SafeAreaView, StyleSheet } from 'react-native'
 

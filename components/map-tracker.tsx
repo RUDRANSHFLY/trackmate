@@ -1,21 +1,25 @@
+import { locationType } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const STORAGE_KEY = "trackmate_route";
-
-type locationType = {
-  latitude: number;
-  longitude: number;
-};
 
 const MapTracker = () => {
   const [location, setLocation] = useState<locationType>();
   const [route, setRoute] = useState<locationType[]>([]);
   const mapRef = useRef(null);
 
+  const clearRoute = async () => {
+    await AsyncStorage.removeItem("trackmate_route");
+    setRoute([]);
+    console.log("Route cleared");
+  };
+
+  //? Accessing Location Permission
   useEffect(() => {
     const requestPermission = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -73,24 +77,32 @@ const MapTracker = () => {
   }
 
   return (
-    <MapView
-      ref={mapRef}
-      style={styles.map}
-      initialRegion={{
-        ...location,
-        latitudeDelta: 0.0001,
-        longitudeDelta: 0.0001,
-      }}
-      cameraZoomRange={{
-        minCenterCoordinateDistance: 50,
-        maxCenterCoordinateDistance: 100,
-        animated: true,
-      }}
-      showsUserLocation={true}
-      followsUserLocation={true}
-    >
-      <Polyline coordinates={route} strokeWidth={4} strokeColor={"red   "} />
-    </MapView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        initialRegion={{
+          ...location,
+          latitudeDelta: 0.0001,
+          longitudeDelta: 0.0001,
+        }}
+        cameraZoomRange={{
+          minCenterCoordinateDistance: 50,
+          maxCenterCoordinateDistance: 100,
+          animated: true,
+        }}
+        showsUserLocation={true}
+        followsUserLocation={true}
+        mapPadding={{
+          top: 50,
+          left: 50,
+          right: 50,
+          bottom: 50,
+        }}
+      >
+        <Polyline coordinates={route} strokeWidth={4} strokeColor={"red"} />
+      </MapView>
+    </SafeAreaView>
   );
 };
 
