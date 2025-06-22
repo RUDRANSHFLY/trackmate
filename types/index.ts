@@ -5,6 +5,16 @@ export type locationType = {
   longitude: number;
 };
 
+export type SerachResult = {
+  display_name : string,
+  lat : string,
+  lon : string,
+}
+
+export interface Coordinates extends locationType{
+  name : string,
+}
+
 export interface BackgroundLocationTrackerData{
     locations  : LocationObject[];
 }

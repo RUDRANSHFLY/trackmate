@@ -1,8 +1,16 @@
 import { locationType } from "@/types";
+import { calculateDistance } from "@/util/lib";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
+import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -11,7 +19,19 @@ const STORAGE_KEY = "trackmate_route";
 const MapTracker = () => {
   const [location, setLocation] = useState<locationType>();
   const [route, setRoute] = useState<locationType[]>([]);
-  const mapRef = useRef(null);
+  const mapRef = useRef<MapView>(null);
+  const router = useRouter();
+
+  setTimeout(() => {
+    mapRef.current?.fitToCoordinates(route, {
+      edgePadding: {
+        top: 100,
+        bottom: 100,
+        right: 100,
+        left: 100,
+      },
+    });
+  }, 300);
 
   const clearRoute = async () => {
     await AsyncStorage.removeItem("trackmate_route");
@@ -102,6 +122,22 @@ const MapTracker = () => {
       >
         <Polyline coordinates={route} strokeWidth={4} strokeColor={"red"} />
       </MapView>
+      <View style={styles.overlay}>
+        <Text style={styles.distance}>
+          Walked : {calculateDistance(route).toFixed(2)} km
+        </Text>
+        <View style={styles.bottomRow}>
+          <TouchableOpacity style={styles.button} onPress={clearRoute}>
+            <Text style={styles.buttonText}>Clear Path</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#4F46E5" }]}
+            onPress={() => router.push("/input")}
+          >
+            <Text style={styles.buttonText}>Search Route</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -114,6 +150,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  overlay: {
+    position: "absolute",
+    bottom: 30,
+    width: "100%",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  bottomRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 12,
+  },
+  button: {
+    backgroundColor: "#EF4444",
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 30,
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  distance: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111",
+    marginBottom: 0,
   },
 });
 
