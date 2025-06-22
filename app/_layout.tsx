@@ -6,6 +6,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="input" />
       <Stack.Screen name="search" />
+      <Stack.Screen name="nearby-suggestion" />
       <Stack.Screen name="+not-found" />
     </Stack>
   );
