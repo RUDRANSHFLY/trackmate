@@ -127,7 +127,10 @@ const MapTracker = () => {
           Walked : {calculateDistance(route).toFixed(2)} km
         </Text>
         <View style={styles.bottomRow}>
-          <TouchableOpacity style={styles.button} onPress={clearRoute}>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/nearby-suggestion')}>
+            <Text style={styles.buttonText}>Nearby Parks</Text>
+          </TouchableOpacity>
+           <TouchableOpacity style={styles.button} onPress={clearRoute}>
             <Text style={styles.buttonText}>Clear Path</Text>
           </TouchableOpacity>
           <TouchableOpacity
